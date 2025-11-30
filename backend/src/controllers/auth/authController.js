@@ -1,11 +1,21 @@
-const bcrypt = require('bcryptjs');
-const Admin = require('../../models/auth/Admin.js');
-const OTP = require('../../models/auth/OTP.js');
-const PendingRegistration = require('../../models/auth/pendingRegistration.js'); // New model needed
-const { sendOTPEmail } = require('../../services/emailService.js');
-const { generateToken, generateRefreshToken, generateResetToken, verifyToken } = require('../../services/tokenService');
-const { validateEmail, validatePhone, validatePassword, validateRequiredFields } = require('../../utils/validators');
-const { generateOTP } = require('../../utils/helpers');
+const bcrypt = require("bcryptjs");
+const Admin = require("../../models/auth/Admin.js");
+const OTP = require("../../models/auth/OTP.js");
+const PendingRegistration = require("../../models/auth/pendingRegistration.js"); // New model needed
+const { sendOTPEmail } = require("../../services/emailService.js");
+const {
+  generateToken,
+  generateRefreshToken,
+  generateResetToken,
+  verifyToken,
+} = require("../../services/tokenService.js");
+const {
+  validateEmail,
+  validatePhone,
+  validatePassword,
+  validateRequiredFields,
+} = require("../../utils/validators.js");
+const { generateOTP } = require("../../utils/helpers.js");
 
 // Register Admin - Store temporarily until OTP verification
 const register = async (req, res) => {
@@ -13,30 +23,38 @@ const register = async (req, res) => {
     const { fullName, email, phone, organization, password } = req.body;
 
     // Validation
-    if (!validateRequiredFields([fullName, email, phone, organization, password])) {
-      return res.status(400).json({ error: 'All fields are required' });
+    if (
+      !validateRequiredFields([fullName, email, phone, organization, password])
+    ) {
+      return res.status(400).json({ error: "All fields are required" });
     }
 
     if (!validatePassword(password)) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 8 characters long" });
     }
 
     if (!validateEmail(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
+      return res.status(400).json({ error: "Invalid email format" });
     }
 
     if (!validatePhone(phone)) {
-      return res.status(400).json({ error: 'Invalid phone number format' });
+      return res.status(400).json({ error: "Invalid phone number format" });
     }
 
     // Check if admin already exists
     const existingAdmin = await Admin.findOne({ email: email.toLowerCase() });
     if (existingAdmin) {
-      return res.status(409).json({ error: 'Admin with this email already exists' });
+      return res
+        .status(409)
+        .json({ error: "Admin with this email already exists" });
     }
 
     // Check if there's already a pending registration
-    const existingPending = await PendingRegistration.findOne({ email: email.toLowerCase() });
+    const existingPending = await PendingRegistration.findOne({
+      email: email.toLowerCase(),
+    });
     if (existingPending) {
       // Update existing pending registration
       existingPending.fullName = fullName;
@@ -53,13 +71,13 @@ const register = async (req, res) => {
         email: email.toLowerCase(),
         phone,
         organization,
-        password: hashedPassword
+        password: hashedPassword,
       });
     }
 
     // Invalidate any existing registration OTPs
     await OTP.updateMany(
-      { email: email.toLowerCase(), type: 'registration', isUsed: false },
+      { email: email.toLowerCase(), type: "registration", isUsed: false },
       { isUsed: true }
     );
 
@@ -68,19 +86,19 @@ const register = async (req, res) => {
     await OTP.create({
       email: email.toLowerCase(),
       otp,
-      type: 'registration'
+      type: "registration",
     });
 
-    await sendOTPEmail(email, otp, 'registration');
+    await sendOTPEmail(email, otp, "registration");
 
     res.status(201).json({
-      message: 'Registration initiated. Please check your email for verification code.',
-      email: email.toLowerCase()
+      message:
+        "Registration initiated. Please check your email for verification code.",
+      email: email.toLowerCase(),
     });
-
   } catch (error) {
-    console.error('Registration error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Registration error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -93,14 +111,14 @@ const login = async (req, res) => {
     if (!email || !password) {
       return res.status(200).json({
         success: false,
-        message: "Email and password are required"
+        message: "Email and password are required",
       });
     }
 
     if (!validateEmail(email)) {
       return res.status(200).json({
         success: false,
-        message: "Invalid email format"
+        message: "Invalid email format",
       });
     }
 
@@ -109,7 +127,7 @@ const login = async (req, res) => {
     if (!admin) {
       return res.status(200).json({
         success: false,
-        message: "Invalid credentials"
+        message: "Invalid credentials",
       });
     }
 
@@ -118,21 +136,21 @@ const login = async (req, res) => {
       const minutes = Math.ceil((admin.lockUntil - Date.now()) / 60000);
       return res.status(200).json({
         success: false,
-        message: `Account locked. Try again in ${minutes} minutes.`
+        message: `Account locked. Try again in ${minutes} minutes.`,
       });
     }
 
     if (!admin.isActive) {
       return res.status(200).json({
         success: false,
-        message: "Account is deactivated"
+        message: "Account is deactivated",
       });
     }
 
     if (admin.hasOwnProperty("isVerified") && !admin.isVerified) {
       return res.status(200).json({
         success: false,
-        message: "Account not verified"
+        message: "Account not verified",
       });
     }
 
@@ -150,7 +168,7 @@ const login = async (req, res) => {
 
       return res.status(200).json({
         success: false,
-        message: "Invalid credentials"
+        message: "Invalid credentials",
       });
     }
 
@@ -173,15 +191,14 @@ const login = async (req, res) => {
         fullName: admin.fullName,
         email: admin.email,
         role: admin.role,
-        lastLogin: admin.lastLogin
-      }
+        lastLogin: admin.lastLogin,
+      },
     });
-
   } catch (error) {
     console.error("Login error:", error);
     return res.status(200).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
@@ -189,14 +206,16 @@ const login = async (req, res) => {
 // Verify OTP
 const verifyOTP = async (req, res) => {
   try {
-    const { email, otp,type} = req.body;
+    const { email, otp, type } = req.body;
 
     if (!validateRequiredFields([email, otp, type])) {
-      return res.status(400).json({ error: 'Email, OTP, and type are required' });
+      return res
+        .status(400)
+        .json({ error: "Email, OTP, and type are required" });
     }
 
     if (otp.length !== 6) {
-      return res.status(400).json({ error: 'OTP must be 6 digits' });
+      return res.status(400).json({ error: "OTP must be 6 digits" });
     }
 
     // Find valid OTP
@@ -204,37 +223,42 @@ const verifyOTP = async (req, res) => {
       email: email.toLowerCase(),
       type,
       isUsed: false,
-      expiresAt: { $gt: new Date() }
+      expiresAt: { $gt: new Date() },
     }).sort({ createdAt: -1 });
 
     if (!otpRecord) {
-      return res.status(400).json({ error: 'Invalid or expired OTP' });
+      return res.status(400).json({ error: "Invalid or expired OTP" });
     }
 
     // Check attempts
     if (otpRecord.attempts >= 3) {
       await OTP.updateOne({ _id: otpRecord._id }, { isUsed: true });
-      return res.status(400).json({ error: 'Too many invalid attempts. Please request a new OTP.' });
+      return res
+        .status(400)
+        .json({
+          error: "Too many invalid attempts. Please request a new OTP.",
+        });
     }
 
     // Verify OTP
     if (otpRecord.otp !== otp) {
-      await OTP.updateOne(
-        { _id: otpRecord._id },
-        { $inc: { attempts: 1 } }
-      );
-      return res.status(400).json({ error: 'Invalid OTP' });
+      await OTP.updateOne({ _id: otpRecord._id }, { $inc: { attempts: 1 } });
+      return res.status(400).json({ error: "Invalid OTP" });
     }
 
     // Mark OTP as used
     await OTP.updateOne({ _id: otpRecord._id }, { isUsed: true });
 
     // Handle different OTP types
-    if (type === 'registration') {
+    if (type === "registration") {
       // Find pending registration
-      const pendingRegistration = await PendingRegistration.findOne({ email: email.toLowerCase() });
+      const pendingRegistration = await PendingRegistration.findOne({
+        email: email.toLowerCase(),
+      });
       if (!pendingRegistration) {
-        return res.status(404).json({ error: 'Pending registration not found' });
+        return res
+          .status(404)
+          .json({ error: "Pending registration not found" });
       }
 
       // Create actual admin account
@@ -245,7 +269,7 @@ const verifyOTP = async (req, res) => {
         organization: pendingRegistration.organization,
         password: pendingRegistration.password,
         isVerified: true,
-        isActive: true
+        isActive: true,
       });
 
       await admin.save();
@@ -254,39 +278,36 @@ const verifyOTP = async (req, res) => {
       await PendingRegistration.deleteOne({ _id: pendingRegistration._id });
 
       return res.json({
-        message: 'Registration completed successfully',
+        message: "Registration completed successfully",
         admin: {
           id: admin._id,
           fullName: admin.fullName,
           email: admin.email,
           organization: admin.organization,
-          role: admin.role
-        }
+          role: admin.role,
+        },
       });
     }
 
-  
-
-    if (type === 'password_reset') {
+    if (type === "password_reset") {
       // Find admin
       const admin = await Admin.findOne({ email: email.toLowerCase() });
       if (!admin) {
-        return res.status(404).json({ error: 'Admin not found' });
+        return res.status(404).json({ error: "Admin not found" });
       }
 
       const resetToken = generateResetToken(admin._id);
 
       return res.json({
-        message: 'OTP verified. You can now reset your password.',
-        resetToken
+        message: "OTP verified. You can now reset your password.",
+        resetToken,
       });
     }
-
   } catch (error) {
-    console.error('OTP verification error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("OTP verification error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-}; 
+};
 
 // Resend OTP
 const resendOTP = async (req, res) => {
@@ -294,20 +315,22 @@ const resendOTP = async (req, res) => {
     const { email, type } = req.body;
 
     if (!validateRequiredFields([email, type])) {
-      return res.status(400).json({ error: 'Email and type are required' });
+      return res.status(400).json({ error: "Email and type are required" });
     }
 
     // For registration type, check pending registration
-    if (type === 'registration') {
-      const pendingRegistration = await PendingRegistration.findOne({ email: email.toLowerCase() });
+    if (type === "registration") {
+      const pendingRegistration = await PendingRegistration.findOne({
+        email: email.toLowerCase(),
+      });
       if (!pendingRegistration) {
-        return res.status(404).json({ error: 'No pending registration found' });
+        return res.status(404).json({ error: "No pending registration found" });
       }
     } else {
       // For login/password_reset, check if admin exists
       const admin = await Admin.findOne({ email: email.toLowerCase() });
       if (!admin) {
-        return res.status(404).json({ error: 'Admin not found' });
+        return res.status(404).json({ error: "Admin not found" });
       }
     }
 
@@ -322,16 +345,15 @@ const resendOTP = async (req, res) => {
     await OTP.create({
       email: email.toLowerCase(),
       otp,
-      type
+      type,
     });
 
     await sendOTPEmail(email, otp, type);
 
-    res.json({ message: 'OTP sent successfully' });
-
+    res.json({ message: "OTP sent successfully" });
   } catch (error) {
-    console.error('Resend OTP error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Resend OTP error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -341,27 +363,29 @@ const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
+      return res.status(400).json({ error: "Email is required" });
     }
 
     if (!validateEmail(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
+      return res.status(400).json({ error: "Invalid email format" });
     }
 
     // Check if admin exists
     const admin = await Admin.findOne({ email: email.toLowerCase() });
     if (!admin) {
       // Don't reveal if email exists or not
-      return res.json({ message: 'If an account exists, a reset code has been sent.' });
+      return res.json({
+        message: "If an account exists, a reset code has been sent.",
+      });
     }
 
     if (!admin.isActive) {
-      return res.status(401).json({ error: 'Account is deactivated' });
+      return res.status(401).json({ error: "Account is deactivated" });
     }
 
     // Invalidate existing password reset OTPs
     await OTP.updateMany(
-      { email: email.toLowerCase(), type: 'password_reset', isUsed: false },
+      { email: email.toLowerCase(), type: "password_reset", isUsed: false },
       { isUsed: true }
     );
 
@@ -370,16 +394,15 @@ const forgotPassword = async (req, res) => {
     await OTP.create({
       email: email.toLowerCase(),
       otp,
-      type: 'password_reset'
+      type: "password_reset",
     });
 
-    await sendOTPEmail(email, otp, 'password_reset');
+    await sendOTPEmail(email, otp, "password_reset");
 
-    res.json({ message: 'If an account exists, a reset code has been sent.' });
-
+    res.json({ message: "If an account exists, a reset code has been sent." });
   } catch (error) {
-    console.error('Forgot password error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Forgot password error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -389,27 +412,32 @@ const resetPassword = async (req, res) => {
     const { resetToken, newPassword, confirmPassword } = req.body;
 
     if (!validateRequiredFields([resetToken, newPassword, confirmPassword])) {
-      return res.status(400).json({ error: 'All fields are required' });
+      return res.status(400).json({ error: "All fields are required" });
     }
 
     if (newPassword !== confirmPassword) {
-      return res.status(400).json({ error: 'Passwords do not match' });
+      return res.status(400).json({ error: "Passwords do not match" });
     }
 
     if (!validatePassword(newPassword)) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 8 characters long" });
     }
 
     // Verify reset token
-    const decoded = verifyToken(resetToken, process.env.JWT_SECRET || 'your-secret-key');
-    if (decoded.type !== 'password_reset') {
-      return res.status(400).json({ error: 'Invalid reset token' });
+    const decoded = verifyToken(
+      resetToken,
+      process.env.JWT_SECRET || "your-secret-key"
+    );
+    if (decoded.type !== "password_reset") {
+      return res.status(400).json({ error: "Invalid reset token" });
     }
 
     // Find admin
     const admin = await Admin.findById(decoded.adminId);
     if (!admin || !admin.isActive) {
-      return res.status(404).json({ error: 'Admin not found or inactive' });
+      return res.status(404).json({ error: "Admin not found or inactive" });
     }
 
     // Hash new password
@@ -423,14 +451,16 @@ const resetPassword = async (req, res) => {
     admin.lockUntil = undefined;
     await admin.save();
 
-    res.json({ message: 'Password reset successfully' });
-
+    res.json({ message: "Password reset successfully" });
   } catch (error) {
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return res.status(400).json({ error: 'Invalid or expired reset token' });
+    if (
+      error.name === "JsonWebTokenError" ||
+      error.name === "TokenExpiredError"
+    ) {
+      return res.status(400).json({ error: "Invalid or expired reset token" });
     }
-    console.error('Reset password error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Reset password error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -440,17 +470,20 @@ const refreshToken = async (req, res) => {
     const { refreshToken: token } = req.body;
 
     if (!token) {
-      return res.status(401).json({ error: 'Refresh token required' });
+      return res.status(401).json({ error: "Refresh token required" });
     }
 
-    const decoded = verifyToken(token, process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key');
-    if (decoded.type !== 'refresh') {
-      return res.status(401).json({ error: 'Invalid refresh token' });
+    const decoded = verifyToken(
+      token,
+      process.env.JWT_REFRESH_SECRET || "your-refresh-secret-key"
+    );
+    if (decoded.type !== "refresh") {
+      return res.status(401).json({ error: "Invalid refresh token" });
     }
 
-    const admin = await Admin.findById(decoded.adminId).select('-password');
+    const admin = await Admin.findById(decoded.adminId).select("-password");
     if (!admin || !admin.isActive) {
-      return res.status(401).json({ error: 'Invalid or inactive account' });
+      return res.status(401).json({ error: "Invalid or inactive account" });
     }
 
     const newAccessToken = generateToken(admin._id);
@@ -458,15 +491,19 @@ const refreshToken = async (req, res) => {
 
     res.json({
       accessToken: newAccessToken,
-      refreshToken: newRefreshToken
+      refreshToken: newRefreshToken,
     });
-
   } catch (error) {
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return res.status(401).json({ error: 'Invalid or expired refresh token' });
+    if (
+      error.name === "JsonWebTokenError" ||
+      error.name === "TokenExpiredError"
+    ) {
+      return res
+        .status(401)
+        .json({ error: "Invalid or expired refresh token" });
     }
-    console.error('Refresh token error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Refresh token error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -483,12 +520,12 @@ const getProfile = async (req, res) => {
         role: req.admin.role,
         isVerified: req.admin.isVerified,
         lastLogin: req.admin.lastLogin,
-        createdAt: req.admin.createdAt
-      }
+        createdAt: req.admin.createdAt,
+      },
     });
   } catch (error) {
-    console.error('Profile fetch error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Profile fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -498,11 +535,13 @@ const updateProfile = async (req, res) => {
     const { fullName, phone, organization } = req.body;
 
     if (!validateRequiredFields([fullName, phone, organization])) {
-      return res.status(400).json({ error: 'Full name, phone, and organization are required' });
+      return res
+        .status(400)
+        .json({ error: "Full name, phone, and organization are required" });
     }
 
     if (!validatePhone(phone)) {
-      return res.status(400).json({ error: 'Invalid phone number format' });
+      return res.status(400).json({ error: "Invalid phone number format" });
     }
 
     const admin = await Admin.findById(req.admin._id);
@@ -513,20 +552,19 @@ const updateProfile = async (req, res) => {
     await admin.save();
 
     res.json({
-      message: 'Profile updated successfully',
+      message: "Profile updated successfully",
       admin: {
         id: admin._id,
         fullName: admin.fullName,
         email: admin.email,
         phone: admin.phone,
         organization: admin.organization,
-        role: admin.role
-      }
+        role: admin.role,
+      },
     });
-
   } catch (error) {
-    console.error('Profile update error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Profile update error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -535,24 +573,31 @@ const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
-    if (!validateRequiredFields([currentPassword, newPassword, confirmPassword])) {
-      return res.status(400).json({ error: 'All fields are required' });
+    if (
+      !validateRequiredFields([currentPassword, newPassword, confirmPassword])
+    ) {
+      return res.status(400).json({ error: "All fields are required" });
     }
 
     if (newPassword !== confirmPassword) {
-      return res.status(400).json({ error: 'New passwords do not match' });
+      return res.status(400).json({ error: "New passwords do not match" });
     }
 
     if (!validatePassword(newPassword)) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 8 characters long" });
     }
 
     const admin = await Admin.findById(req.admin._id);
-    
+
     // Verify current password
-    const isValidPassword = await bcrypt.compare(currentPassword, admin.password);
+    const isValidPassword = await bcrypt.compare(
+      currentPassword,
+      admin.password
+    );
     if (!isValidPassword) {
-      return res.status(400).json({ error: 'Current password is incorrect' });
+      return res.status(400).json({ error: "Current password is incorrect" });
     }
 
     // Hash new password
@@ -563,11 +608,10 @@ const changePassword = async (req, res) => {
     admin.updatedAt = new Date();
     await admin.save();
 
-    res.json({ message: 'Password changed successfully' });
-
+    res.json({ message: "Password changed successfully" });
   } catch (error) {
-    console.error('Change password error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Change password error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -575,10 +619,10 @@ const changePassword = async (req, res) => {
 const logout = async (req, res) => {
   try {
     // In a more sophisticated setup, you might blacklist the token
-    res.json({ message: 'Logged out successfully' });
+    res.json({ message: "Logged out successfully" });
   } catch (error) {
-    console.error('Logout error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Logout error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -586,9 +630,11 @@ const logout = async (req, res) => {
 const cleanupExpiredPendingRegistrations = async () => {
   try {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-    await PendingRegistration.deleteMany({ createdAt: { $lt: thirtyMinutesAgo } });
+    await PendingRegistration.deleteMany({
+      createdAt: { $lt: thirtyMinutesAgo },
+    });
   } catch (error) {
-    console.error('Cleanup error:', error);
+    console.error("Cleanup error:", error);
   }
 };
 
@@ -604,5 +650,5 @@ module.exports = {
   updateProfile,
   changePassword,
   logout,
-  cleanupExpiredPendingRegistrations
+  cleanupExpiredPendingRegistrations,
 };
