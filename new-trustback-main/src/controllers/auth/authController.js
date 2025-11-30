@@ -42,12 +42,12 @@ const register = async (req, res) => {
       existingPending.fullName = fullName;
       existingPending.phone = phone;
       existingPending.organization = organization;
-      existingPending.password = await bcrypt.hash(password, 12);
+      existingPending.password = await bcrypt.hash(password, 10);
       existingPending.createdAt = new Date();
       await existingPending.save();
     } else {
       // Create new pending registration
-      const hashedPassword = await bcrypt.hash(password, 12);
+      const hashedPassword = await bcrypt.hash(password, 10);
       await PendingRegistration.create({
         fullName,
         email: email.toLowerCase(),
@@ -413,7 +413,7 @@ const resetPassword = async (req, res) => {
     }
 
     // Hash new password
-    const saltRounds = 12;
+    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
     // Update password
@@ -556,7 +556,7 @@ const changePassword = async (req, res) => {
     }
 
     // Hash new password
-    const saltRounds = 12;
+    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
     admin.password = hashedPassword;
