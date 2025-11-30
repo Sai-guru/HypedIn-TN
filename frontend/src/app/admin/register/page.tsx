@@ -61,51 +61,7 @@ export default function AdminRegisterPage() {
     const re = /^[+]?[\d\s-()]{10,}$/;
     return re.test(phone);
   };
-
-  // const handleRegister = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   const newErrors: any = {};
-
-  //   if (!formData.fullName) newErrors.fullName = 'Full name is required';
-  //   if (!formData.email) newErrors.email = 'Email is required';
-  //   else if (!validateEmail(formData.email)) newErrors.email = 'Invalid email format';
-  //   if (!formData.phone) newErrors.phone = 'Phone number is required';
-  //   else if (!validatePhone(formData.phone)) newErrors.phone = 'Invalid phone number';
-  //   if (!formData.organization) newErrors.organization = 'Organization is required';
-  //   if (!formData.password) newErrors.password = 'Password is required';
-  //   else if (!validatePassword(formData.password)) newErrors.password = 'Password must be at least 8 characters';
-  //   if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-
-  //   if (Object.keys(newErrors).length > 0) {
-  //     setErrors(newErrors);
-  //     return;
-  //   }
-
-  //   setIsLoading(true);
-
-  //   try {
-  //     // Replace with your actual register API call
-  //     const response = await fetch('/api/auth/register', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(formData),
-  //     });
-
-  //     if (response.ok) {
-  //       // Redirect to OTP verification with email
-  //       router.push(`/admin/verify-otp?email=${encodeURIComponent(formData.email)}`);
-  //     } else {
-  //       const errorData = await response.json();
-  //       setErrors({ general: errorData.message || 'Registration failed' });
-  //     }
-  //   } catch (error) {
-  //     setErrors({ general: 'Network error. Please try again.' });
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: any = {};

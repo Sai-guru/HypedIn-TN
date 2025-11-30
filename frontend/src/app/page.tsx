@@ -240,7 +240,7 @@ const AdminAuthSystem = () => {
     }
   };
 
-  // Handle Register
+  // Handle Register done;
   const handleRegister = async (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -300,7 +300,7 @@ const AdminAuthSystem = () => {
     }
   };
 
-  // Handle OTP Verification
+  // Handle OTP Verification -cool
   const handleOtpVerify = async (e) => {
     e.preventDefault();
     const otpString = formData.otp.join("");
