@@ -623,6 +623,8 @@ const AdminAuthSystem = () => {
                       onChange={(e) =>
                         handleInputChange("password", e.target.value)
                       }
+                      minLength={8}
+                      required
                       className="w-full bg-white/10 border border-white/20 rounded-xl px-12 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                     />
                     <button

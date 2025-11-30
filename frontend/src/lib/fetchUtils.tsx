@@ -41,13 +41,13 @@ export async function safeFetch<T = any>(
   endpoint: string,
   options: FetchOptions = {}
 ): Promise<FetchResponse<T>> {
-  const { timeout = 10000, showFallback = true, ...fetchOptions } = options;
+  const { timeout = 30000, showFallback = true, ...fetchOptions } = options;
 
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-    const url = endpoint.startsWith("http")
+    const url = endpoint.startsWith('http')
       ? endpoint
       : `${API_BASE_URL}${
           endpoint.startsWith("/") ? endpoint : "/" + endpoint
@@ -60,13 +60,16 @@ export async function safeFetch<T = any>(
 
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      throw new Error(
-        `HTTP ${response.status}: ${response.statusText}. Service may be unavailable.`
-      );
+    // Try to parse JSON response body (if any). Keep parsing even on non-OK
+    // responses so callers can inspect server-provided error messages
+    // (for example HTTP 409 / conflict with a helpful `message`).
+    let data: unknown = null;
+    try {
+      data = await response.json();
+    } catch {
+      // ignore parse errors (non-JSON responses)
+      data = null;
     }
-
-    const data = await response.json();
 
     // If the server returns its own `success` flag in the JSON body, respect that.
     // Otherwise fall back to the HTTP `response.ok` value.
@@ -77,10 +80,15 @@ export async function safeFetch<T = any>(
         ? !!data.success
         : response.ok;
 
+    const errorMsg = overallSuccess
+      ? null
+      : (data && (data.error || data.message)) ||
+        `${response.status} ${response.statusText}`;
+
     return {
       success: overallSuccess,
       data,
-      error: null,
+      error: errorMsg,
       status: response.status,
     };
   } catch (error) {

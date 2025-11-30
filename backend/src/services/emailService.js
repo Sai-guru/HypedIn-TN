@@ -66,3 +66,4 @@ const sendOTPEmail = async (email, otp, type) => {
 module.exports = {
   sendOTPEmail
 };
+
