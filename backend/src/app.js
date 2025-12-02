@@ -1,7 +1,7 @@
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
-const path = require("path"); // ✅ Added this line
+const path = require("path"); 
 const app = express();
 require("./config/database.js");
 
@@ -102,7 +102,7 @@ app.get("/api/test-connection", (req, res) => {
 
 // In your Express server setup
 // Static uploads route
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
 
 // API Routes
 app.use("/api/auth", authRoutes);

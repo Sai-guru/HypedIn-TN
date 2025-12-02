@@ -22,7 +22,7 @@ export default function ContactInfo() {
   useEffect(() => {
     // Animate contact details with typing effect
     const textElements = [phoneRef, emailRef, addressRef]
-    const textValues = ['+91 123 456 7890', 'contact@charitytrust.org', 'Main Office: 123 Charity Lane, Mumbai, India']
+    const textValues = ['+91 90803 81686', 'bharatsamarthatrust@gmail.com', 'Chennai']
     
     textElements.forEach((ref, index) => {
       if (ref.current) {

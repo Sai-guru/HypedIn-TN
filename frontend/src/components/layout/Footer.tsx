@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* About */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Global Impact Trust</h3>
+            <h3 className="text-xl font-bold mb-4">Bharat Samarth Trust</h3>
             <p className="text-gray-400 mb-6">
               Empowering communities worldwide through sustainable development, education, and healthcare initiatives.
             </p>
@@ -72,19 +72,16 @@ export default function Footer() {
               <li className="flex items-start">
                 <MapPin className="w-5 h-5 mr-3 text-purple-400 mt-1 flex-shrink-0" />
                 <span className="text-gray-400">
-                  123 Charity Street, New York, NY 10001, United States
+                  Chennai
                 </span>
               </li>
               <li className="flex items-center">
                 <Phone className="w-5 h-5 mr-3 text-purple-400 flex-shrink-0" />
-                <span className="text-gray-400">+1 (555) 123-4567</span>
+                <span className="text-gray-400">+91 90803 81686</span>
               </li>
               <li className="flex items-center">
                 <Mail className="w-5 h-5 mr-3 text-purple-400 flex-shrink-0" />
-                <span className="text-gray-400">info@globalimpacttrust.org</span>
-              </li><li className="flex items-center">
-                <Mail className="w-5 h-5 mr-3 text-purple-400 flex-shrink-0" />
-                <span className="text-gray-400">info@globalimpacttrust.org</span>
+                <span className="text-gray-400">bharatsamarthatrust@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -114,7 +111,7 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-12 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm mb-4 md:mb-0">
-              © {new Date().getFullYear()} Global Impact Trust. All rights reserved.
+              © {new Date().getFullYear()} Bharat Samarth Trust. All rights reserved.
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-gray-500 hover:text-white text-sm">
