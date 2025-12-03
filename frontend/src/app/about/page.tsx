@@ -88,7 +88,8 @@ export default function AboutPage() {
               <div className="absolute -top-4 -left-4 w-full h-full bg-purple-200 rounded-xl" />
               <div className="relative z-10 rounded-xl overflow-hidden shadow-xl">
                 <img 
-                  src="/api/placeholder/600/400" 
+                  // src="/api/placeholder/600/400" 
+                  src="https://2mtegaywr8.ucarecd.net/d79afa61-9008-4c10-b533-7afd91c99533/-/preview/612x408/" 
                   alt="Volunteers working together" 
                   className="w-full h-full object-cover"
                 />
