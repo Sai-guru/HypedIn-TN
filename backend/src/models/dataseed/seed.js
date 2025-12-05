@@ -1,88 +1,72 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
-const Impact = require('../home/impactModel'); // your model file
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/yourdbname', {
   useNewUrlParser: true,
   useUnifiedTopology: true
-} )
+})
   .then(() => console.log("DB Connected"))
   .catch((err) => console.log(err));
 
+const Impact = require('../home/impactModel'); // your schema file
+
 const seedData = {
   title: "Our Global Impact",
-  subtitle: "Shaping the Future Together",
-  description:
-    "We focus on innovation, community building, and sustainable growth. These numbers reflect our journey so far.",
-  backgroundImage: "https://2mtegaywr8.ucarecd.net/e6fedc8a-de97-4634-b744-89a7a57f9fbf/photo1471039497385b6d6ba609f9c.jpg",
+  subtitle: "Driving Innovation and Change",
+  description: "We empower communities and build solutions that create long-term value.",
+  backgroundImage: "https://2mtegaywr8.ucarecd.net/058df045-d0bd-48a1-b538-d73cdb07ea42/mapnetworkconnectbusinessdigitalglobalworldinternationalearthglobalbusinessnetworkmapdigitalconnectivity409929560.jpg",
 
   stats: [
     {
       id: "s1",
-      icon: "🚀",
-      number: "250K+",
+      icon: "🌟",
+      number: "120K+",
       label: "Active Users",
-      description: "People using our platform worldwide",
+      description: "People positively influenced by our work",
       color: "#4F46E5"
     },
     {
       id: "s2",
-      icon: "🌍",
-      number: "48",
-      label: "Countries Reached",
-      description: "Global presence expanding steadily",
+      icon: "🌎",
+      number: "25",
+      label: "Countries",
+      description: "Global presence expanding rapidly",
       color: "#059669"
     },
     {
       id: "s3",
       icon: "🏆",
-      number: "35+",
-      label: "Awards Won",
-      description: "Recognitions for innovation and service",
+      number: "18",
+      label: "Awards",
+      description: "Recognitions for excellence and innovation",
       color: "#D97706"
-    },
-    {
-      id: "s4",
-      icon: "💼",
-      number: "1200+",
-      label: "Partnerships",
-      description: "Growing network of trusted collaborators",
-      color: "#DC2626"
     }
   ],
 
   achievements: [
     {
       id: "a1",
-      title: "Innovation Excellence",
-      description: "Awarded for breakthrough AI-driven solutions.",
-      image: "https://2mtegaywr8.ucarecd.net/0d7d166b-bd97-4af2-87ed-108338ce8a48/innovation_award.png",
-      category: "Technology",
+      title: "Global Service Award",
+      description: "Recognized internationally for service quality.",
+      image: "https://2mtegaywr8.ucarecd.net/d11db053-1d02-4678-a537-f0e3c4b68d7c/360_F_1747340042_9W9fXpLJu7J8WVOKKDNPx4Svd0Zi9awW.jpg",
+      category: "Service",
       year: "2023"
     },
     {
       id: "a2",
-      title: "Best Startup of the Year",
-      description: "Recognised for outstanding market growth.",
-      image: "https://2mtegaywr8.ucarecd.net/efd54baf-c2d9-45d0-993c-b75a546e2e19/diversepeoplestartupbusinessconceptworking43739580.jpg",
-      category: "Startup",
+      title: "Innovation Leader",
+      description: "Awarded for outstanding tech-driven solutions.",
+      image: "https://2mtegaywr8.ucarecd.net/9a245e59-222b-4e2e-9fac-7e66bc61b0f4/innovativeleadership.jpg",
+      category: "Technology",
       year: "2024"
     },
     {
       id: "a3",
-      title: "Social Impact Award",
-      description: "For contributions to digital education worldwide.",
-      image: "https://2mtegaywr8.ucarecd.net/4fe13a51-0483-4499-9ab6-807c8045f8b3/SocialImpactAward.jpg",
+      title: "Community Builder Award",
+      description: "Honored for our contribution to digital education.",
+      image: "https://2mtegaywr8.ucarecd.net/3aad935c-6b2e-4b8a-88aa-ceba8a1336e4/2135623cba964075a3b2d4a92e3458b4eb7c5f63a1ab448ab4b8b1f301b0d143md.jpg",
       category: "Community",
       year: "2022"
-    },
-    {
-      id: "a4",
-      title: "Sustainability Leadership",
-      description: "For eco-friendly and sustainable solutions.",
-      image: "https://2mtegaywr8.ucarecd.net/654b3d86-de0d-47b7-83b2-aeaa8fbd38c0/1581626393980.jpg",
-      category: "Environment",
-      year: "2021"
     }
   ]
 };
@@ -91,7 +75,7 @@ async function seed() {
   try {
     await Impact.deleteMany({});
     await Impact.create(seedData);
-    console.log("Seed data inserted successfully!");
+    console.log("Seed inserted successfully!");
     mongoose.connection.close();
   } catch (err) {
     console.error(err);
