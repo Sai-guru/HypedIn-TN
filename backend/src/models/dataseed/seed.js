@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const { Category, GalleryItem } = require("./galleryModel"); // adjust the path
+const { Category, GalleryItem } = require("../gallery/gpage"); // adjust the path
 
 mongoose
   .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/yourdbname", {
@@ -60,8 +60,8 @@ async function seedGallery() {
         title: "Food Distribution Drive",
         description: "Volunteers distributing meal packs to underprivileged families.",
         category: catMap.community,
-        thumbnail: "/uploads/gallery/thumbs/food-drive.jpg",
-        imageUrl: "/uploads/gallery/food-drive.jpg",
+        thumbnail: "https://2mtegaywr8.ucarecd.net/81420a16-1d7c-46df-abb1-59eff2618752/fooddrivecharitymovement_199580.jpg",
+        imageUrl: "https://2mtegaywr8.ucarecd.net/8ae00559-f7bb-4fa2-8f23-95d48c508af9/charityworkersfeedinghomelesscharityworkershelpinghomelessrefugeesneedydistributingfoodoutdoorshunger302388639.jpg",
         featured: false,
         rotatingGallery: true,
         tags: ["community", "food", "volunteers"]
@@ -70,8 +70,8 @@ async function seedGallery() {
         title: "Tree Plantation Event",
         description: "A green mission initiative with local volunteers and students.",
         category: catMap.env,
-        thumbnail: "/uploads/gallery/thumbs/tree-plantation.jpg",
-        imageUrl: "/uploads/gallery/tree-plantation.jpg",
+        thumbnail: "https://2mtegaywr8.ucarecd.net/1d4fe3c9-c892-44f4-bfdf-74b05feab796/-/preview/299x168/",
+        imageUrl: "https://2mtegaywr8.ucarecd.net/448a25b4-f666-4cbf-8ed4-c19b6d7ebe6d/growbilliontreesplantation3.jpg",
         featured: true,
         rotatingGallery: false,
         tags: ["environment", "trees", "green"]
@@ -80,8 +80,8 @@ async function seedGallery() {
         title: "Study Material Distribution",
         description: "Free study kits were distributed to school children.",
         category: catMap.edu,
-        thumbnail: "/uploads/gallery/thumbs/study-kit.jpg",
-        imageUrl: "/uploads/gallery/study-kit.jpg",
+        thumbnail: "https://2mtegaywr8.ucarecd.net/0c21bf7a-9421-4cf7-a1f7-5a0946b92543/images",
+        imageUrl: "https://2mtegaywr8.ucarecd.net/8ec79112-a5d4-4468-95fb-cd3b8cdc0f70/images",
         featured: false,
         rotatingGallery: false,
         tags: ["education", "support"]
