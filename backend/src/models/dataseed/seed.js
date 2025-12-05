@@ -9,107 +9,71 @@ mongoose
   .then(() => console.log("DB Connected"))
   .catch((err) => console.log(err));
 
-const VolunteerManagement = require("../home/volunteer"); // adjust path
+const Testimonial = require("../home/testimonial"); // adjust the path
 
-const seedData = {
-  sectionSettings: {
-    sectionVisible: true,
-    sectionTitle: "Volunteer Opportunities",
-    sectionSubtitle: "Join hands with us to create lasting impact",
-    highlightUrgent: true,
-    showSkillsRequired: true,
-    showBenefits: true,
+const seedData = [
+  {
+    name: "Kathrine D'Souza",
+    role: "Beneficiary - Food Assistance Program",
+    content:
+      "Thanks to the trust, I am able to feed my children nutritious meals regularly. Their support has brought a huge relief to my family.",
+    rating: 5,
+    image: "https://2mtegaywr8.ucarecd.net/12699d28-01a3-4f62-bbc2-afd2b80a6cfc/images",
+    featured: true,
+    approved: true,
+    dateSubmitted: new Date("2024-10-15"),
+    location: "Chennai, Tamil Nadu",
+    category: "beneficiary"
   },
 
-  opportunities: [
-    {
-      title: "Community Food Distribution",
-      category: "Community Service",
-      description:
-        "Assist in packing and distributing essential groceries to underprivileged families.",
-      requirements: [
-        "Must be 16+ years old",
-        "Basic communication",
-        "Physically fit for lifting small packages",
-      ],
-      timeCommitment: "3 hours per session",
-      location: "Chennai, Tamil Nadu",
-      spotsAvailable: 15,
-      currentVolunteers: 9,
-      skillsRequired: ["Teamwork", "Basic organization", "Responsibility"],
-      benefits: ["Certificate", "Volunteer hours", "Meals provided"],
-      visible: true,
-      urgent: true,
-      remote: false,
-      icon: "fa-hand-holding-heart",
-      color: "#ef4444",
-    },
+  {
+    name: "Henrey Mathew",
+    role: "Volunteer - Teaching Program",
+    content:
+      "Volunteering here has changed my life. Teaching the kids has given me purpose and joy. The organization is extremely supportive.",
+    rating: 5,
+    image: "https://2mtegaywr8.ucarecd.net/51921295-691d-4112-8768-adb46646bce6/BusinessProfessionalDressCodeModelwithBurgundyBlazerandbluestripedshirt.jpg",
+    featured: false,
+    approved: true,
+    dateSubmitted: new Date("2024-09-20"),
+    location: "Hyderabad, Telangana",
+    category: "volunteer"
+  },
 
-    {
-      title: "Online Teaching Support",
-      category: "Education",
-      description:
-        "Teach English, Math, or Science to school children in rural areas through online sessions.",
-      requirements: ["Laptop/Phone", "Stable internet", "Patience and empathy"],
-      timeCommitment: "4 hours per week",
-      location: "Remote",
-      spotsAvailable: 20,
-      currentVolunteers: 14,
-      skillsRequired: ["Teaching", "Communication", "Time management"],
-      benefits: ["Certification", "Skill development"],
-      visible: true,
-      urgent: false,
-      remote: true,
-      icon: "fa-chalkboard-teacher",
-      color: "#3b82f6",
-    },
+  {
+    name: "Priya Sharma",
+    role: "Donor - Monthly Supporter",
+    content:
+      "I donate every month because I truly trust their mission. The transparency and impact reports make me feel confident my money is used right.",
+    rating: 4,
+    image: "https://2mtegaywr8.ucarecd.net/cafbdd1b-2316-4609-9a0d-2f883b20b145/portraitbeautifulyoungindiangirlbusinesswomansmilingsittingstepsofficebuildingholdingnotepadwhite158880029.jpg",
+    featured: true,
+    approved: true,
+    dateSubmitted: new Date("2024-11-05"),
+    location: "Bangalore, Karnataka",
+    category: "donor"
+  },
 
-    {
-      title: "Event Support Volunteer",
-      category: "Event Management",
-      description:
-        "Help us set up, coordinate, and manage special charity events and community activities.",
-      requirements: ["Must be 18+", "Comfortable with crowds"],
-      timeCommitment: "Full day (as per event)",
-      location: "Hyderabad",
-      spotsAvailable: 10,
-      currentVolunteers: 6,
-      skillsRequired: ["Public interaction", "Coordination", "Problem-solving"],
-      benefits: ["Experience certificate", "Networking opportunity"],
-      visible: true,
-      urgent: false,
-      remote: false,
-      icon: "fa-calendar-check",
-      color: "#10b981",
-    },
-
-    {
-      title: "Content Creator for Awareness Campaigns",
-      category: "Media & Outreach",
-      description:
-        "Create posters, short videos, or social media content for health and education awareness.",
-      requirements: ["Basic design skills", "Creative thinking"],
-      timeCommitment: "Flexible hours",
-      location: "Remote",
-      spotsAvailable: 8,
-      currentVolunteers: 3,
-      skillsRequired: ["Graphic design", "Video editing", "Writing"],
-      benefits: ["Portfolio boost", "Certificate"],
-      visible: true,
-      urgent: true,
-      remote: true,
-      icon: "fa-bullhorn",
-      color: "#f59e0b",
-    }
-  ]
-};
+  {
+    name: "GreenLeaf Corporate",
+    role: "Corporate Partner",
+    content:
+      "Our partnership with the trust has allowed us to contribute to meaningful environmental and educational projects. Their professionalism is excellent.",
+    rating: 5,
+    image: "https://2mtegaywr8.ucarecd.net/ed9b7532-fea5-4842-aed5-0d07728ed418/images",
+    featured: false,
+    approved: true,
+    dateSubmitted: new Date("2024-08-10"),
+    location: "Mumbai, Maharashtra",
+    category: "partner"
+  }
+];
 
 async function seed() {
   try {
-    await VolunteerManagement.deleteMany({});
-    await VolunteerManagement.create(seedData);
-
-    console.log("VolunteerManagement seed added!");
+    await Testimonial.deleteMany({});
+    await Testimonial.insertMany(seedData);
+    console.log("Testimonials seeded successfully!");
     mongoose.connection.close();
   } catch (err) {
     console.error(err);
