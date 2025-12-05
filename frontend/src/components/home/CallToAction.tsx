@@ -13,9 +13,10 @@ const CallToAction = ({ ctaId = 'main-cta' }) => {
       try {
         setLoading(true);
         setError(null);
-        console.log(`Fetching CTA data from: /api/cta/cta/${ctaId}`);
+        //before this coprrection there was another extra /cta/ in the path , so i solved it
+        console.log(`Fetching CTA data from: /api/cta/${ctaId}`);
         
-        const result = await safeFetch(`/api/cta/cta/${ctaId}`);
+        const result = await safeFetch(`/api/cta/${ctaId}`);
         console.log('Fetch result:', result);
         
         if (result.success && result.data) {

@@ -18,6 +18,10 @@ const nextConfig = {
       { protocol: "https", hostname: "picsum.photos" },
       // Localhost images (dev): allow http on localhost
       { protocol: "http", hostname: "localhost" },
+       {
+        protocol: "https",
+        hostname: "2mtegaywr8.ucarecd.net",
+      },
     ],
   },
 
