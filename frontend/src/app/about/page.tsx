@@ -83,6 +83,7 @@ export default function AboutPage() {
               <p className="text-xl text-purple-600 font-semibold italic">
                 "Every small act of kindness creates a ripple effect of change."
               </p>
+              
             </div>
             <div className="md:w-1/2 relative">
               <div className="absolute -top-4 -left-4 w-full h-full bg-purple-200 rounded-xl" />
