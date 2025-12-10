@@ -1,9 +1,9 @@
-'use client'
-import { useEffect, useRef, useState } from 'react';
-import { safeFetch, FetchErrorFallback } from '@/lib/fetchUtils';
+"use client";
+import { useEffect, useRef, useState } from "react";
+import { safeFetch, FetchErrorFallback } from "@/lib/fetchUtils";
 
 interface HeroSettings {
-  backgroundType: 'video' | 'image';
+  backgroundType: "video" | "image";
   videoUrl?: string;
   imageUrl?: string;
   title: string;
@@ -45,44 +45,85 @@ export default function GalleryHero() {
   useEffect(() => {
     const fetchHeroSettings = async () => {
       try {
-        const result = await safeFetch('/api/ghero');
-        if (!result.success || !result.data) {
-          throw new Error(result.error || 'Failed to load hero settings');
-        }
-        setSettings(result.data);
-      } catch (err) {
-        console.error('Error fetching hero settings:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load hero settings');
-        
-        // Fallback to default settings if API fails
+        const result = await safeFetch("/api/ghero");
         const fallbackSettings: HeroSettings = {
-          backgroundType: 'image',
-          imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
-          title: 'Our Journey in Pictures',
-          subtitle: 'Witness the impact of your contributions through our visual storytelling',
+          backgroundType: "image",
+          imageUrl:
+            "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=2000&q=80",
+          title: "Our Journey in Pictures",
+          subtitle:
+            "Witness the impact of your contributions through our visual storytelling",
           overlayOpacity: 0.4,
-          overlayColor: 'rgba(0, 0, 0, 0.5)',
-          titleColor: '#ffffff',
-          subtitleColor: '#e5e7eb',
+          overlayColor: "rgba(0, 0, 0, 0.5)",
+          titleColor: "#ffffff",
+          subtitleColor: "#e5e7eb",
+          titleSize: { mobile: "4xl", tablet: "6xl", desktop: "7xl" },
+          subtitleSize: { mobile: "xl", tablet: "2xl", desktop: "3xl" },
+          animationDelay: { title: 0.3, subtitle: 0.6 },
+          autoplay: true,
+          loop: true,
+          muted: true,
+        };
+
+        // Allow empty DB but still render by merging defaults with data
+        const apiSettings =
+          result.success && result.data && typeof result.data === "object"
+            ? (result.data as Partial<HeroSettings>)
+            : null;
+
+        const mergedSettings: HeroSettings = {
+          ...fallbackSettings,
+          ...apiSettings,
+          // ensure overlayOpacity numeric fallback
+          overlayOpacity:
+            typeof apiSettings?.overlayOpacity === "number"
+              ? apiSettings.overlayOpacity
+              : fallbackSettings.overlayOpacity,
+          backgroundType:
+            apiSettings?.backgroundType || fallbackSettings.backgroundType,
+          imageUrl: apiSettings?.imageUrl || fallbackSettings.imageUrl,
+          videoUrl: apiSettings?.videoUrl || undefined,
+          title: apiSettings?.title || fallbackSettings.title,
+          subtitle: apiSettings?.subtitle || fallbackSettings.subtitle,
+        };
+
+        setSettings(mergedSettings);
+      } catch (err) {
+        console.error("Error fetching hero settings:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load hero settings"
+        );
+
+        // Fallback to default settings if API fails
+        setSettings({
+          backgroundType: "image",
+          imageUrl:
+            "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=2000&q=80",
+          title: "Our Journey in Pictures",
+          subtitle:
+            "Witness the impact of your contributions through our visual storytelling",
+          overlayOpacity: 0.4,
+          overlayColor: "rgba(0, 0, 0, 0.5)",
+          titleColor: "#ffffff",
+          subtitleColor: "#e5e7eb",
           titleSize: {
-            mobile: '4xl',
-            tablet: '6xl',
-            desktop: '7xl'
+            mobile: "4xl",
+            tablet: "6xl",
+            desktop: "7xl",
           },
           subtitleSize: {
-            mobile: 'xl',
-            tablet: '2xl',
-            desktop: '3xl'
+            mobile: "xl",
+            tablet: "2xl",
+            desktop: "3xl",
           },
           animationDelay: {
             title: 0.3,
-            subtitle: 0.6
+            subtitle: 0.6,
           },
           autoplay: true,
           loop: true,
-          muted: true
-        };
-        setSettings(fallbackSettings);
+          muted: true,
+        });
       } finally {
         setLoading(false);
       }
@@ -98,37 +139,40 @@ export default function GalleryHero() {
     const animateElements = () => {
       // Animate overlay
       if (overlayRef.current) {
-        overlayRef.current.style.opacity = '0';
-        overlayRef.current.style.transition = 'opacity 1.5s ease-in-out';
+        overlayRef.current.style.opacity = "0";
+        overlayRef.current.style.transition = "opacity 1.5s ease-in-out";
         setTimeout(() => {
           if (overlayRef.current) {
-            overlayRef.current.style.opacity = settings.overlayOpacity.toString();
+            overlayRef.current.style.opacity =
+              settings.overlayOpacity.toString();
           }
         }, 100);
       }
 
       // Animate title
       if (titleRef.current) {
-        titleRef.current.style.opacity = '0';
-        titleRef.current.style.transform = 'translateY(50px)';
-        titleRef.current.style.transition = 'opacity 1.2s ease-out, transform 1.2s ease-out';
+        titleRef.current.style.opacity = "0";
+        titleRef.current.style.transform = "translateY(50px)";
+        titleRef.current.style.transition =
+          "opacity 1.2s ease-out, transform 1.2s ease-out";
         setTimeout(() => {
           if (titleRef.current) {
-            titleRef.current.style.opacity = '1';
-            titleRef.current.style.transform = 'translateY(0)';
+            titleRef.current.style.opacity = "1";
+            titleRef.current.style.transform = "translateY(0)";
           }
         }, settings.animationDelay.title * 1000);
       }
 
       // Animate subtitle
       if (subtitleRef.current) {
-        subtitleRef.current.style.opacity = '0';
-        subtitleRef.current.style.transform = 'translateY(30px)';
-        subtitleRef.current.style.transition = 'opacity 1.2s ease-out, transform 1.2s ease-out';
+        subtitleRef.current.style.opacity = "0";
+        subtitleRef.current.style.transform = "translateY(30px)";
+        subtitleRef.current.style.transition =
+          "opacity 1.2s ease-out, transform 1.2s ease-out";
         setTimeout(() => {
           if (subtitleRef.current) {
-            subtitleRef.current.style.opacity = '1';
-            subtitleRef.current.style.transform = 'translateY(0)';
+            subtitleRef.current.style.opacity = "1";
+            subtitleRef.current.style.transform = "translateY(0)";
           }
         }, settings.animationDelay.subtitle * 1000);
       }
@@ -164,9 +208,12 @@ export default function GalleryHero() {
   }
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ height: 'calc(100vh - 80px)' }}>
+    <div
+      className="relative w-full overflow-hidden"
+      style={{ height: "calc(100vh - 80px)" }}
+    >
       {/* Background Media */}
-      {settings.backgroundType === 'video' && settings.videoUrl ? (
+      {settings.backgroundType === "video" && settings.videoUrl ? (
         <video
           ref={videoRef}
           autoPlay={settings.autoplay}
@@ -177,7 +224,7 @@ export default function GalleryHero() {
           <source src={settings.videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-      ) : settings.backgroundType === 'image' && settings.imageUrl ? (
+      ) : settings.backgroundType === "image" && settings.imageUrl ? (
         <img
           ref={imageRef}
           src={settings.imageUrl}
@@ -192,7 +239,7 @@ export default function GalleryHero() {
         className="absolute inset-0 z-10"
         style={{
           backgroundColor: settings.overlayColor,
-          opacity: 0
+          opacity: 0,
         }}
       />
 
