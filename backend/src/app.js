@@ -74,6 +74,9 @@ const aid = require("./routes/legal/aid.js");
 const property = require("./routes/legal/property.js");
 const legalsec = require("./routes/legal/legalsec.js");
 
+
+const paymentRoutes = require("./routes/paymentRoutes"); // forr payment
+
 // Middleware
 app.use(helmet());
 
@@ -174,6 +177,8 @@ app.use("/api/find", find);
 app.use("/api/aid", aid);
 app.use("/api/property-law", property);
 app.use("/api/legalsec", legalsec);
+
+app.use("/api/payments", paymentRoutes); // for payment
 
 // Error handling middleware
 app.use((error, req, res, next) => {

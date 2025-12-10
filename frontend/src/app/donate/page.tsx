@@ -1,115 +1,265 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useState, useEffect } from "react";
+import { Heart, Loader2 } from "lucide-react";
 
-// Components
-import HeroBanner from '@/components/features/donate/HeroBanner';
-import DonationForm from '@/components/features/donate/DonationForm';
-import ImpactMeter from '@/components/features/donate/ImpactMeter';
-import TransparencySection from '@/components/features/donate/TransparencySection';
-import TestimonialSection from '@/components/features/donate/TestimonialSection';
-import FloatingDonateButton from '@/components/ui/FloatingDonateButton';
-import ChatbotButton from '@/components/features/ChatbotButton';
-import ThankYouModal from '@/components/features/donate/ThankYouModal';
+interface PaymentResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
 
-export default function DonatePage() {
-  // Register GSAP plugins
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    
-    // Initial page animation
-    gsap.from('.donate-section', {
-      opacity: 0,
-      y: 30,
-      stagger: 0.2,
-      duration: 0.8,
-      ease: 'power2.out',
+const PRESET_AMOUNTS = [100, 500, 1000, 5000, 10000];
+
+export default function Donate() {
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(500);
+  const [customAmount, setCustomAmount] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+
+  const amount = customAmount ? parseInt(customAmount) : selectedAmount;
+
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
     });
+  };
 
-    return () => {
-      // Clean up ScrollTrigger
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
+  const handlePayment = async () => {
+    if (!amount || amount < 10) {
+      setError("Minimum donation amount is ₹10");
+      return;
+    }
 
-  // State for donation flow
-  const [showThankYou, setShowThankYou] = useState(false);
-  const [donorName, setDonorName] = useState('');
-  const [donationAmount, setDonationAmount] = useState(0);
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
 
-  // Function to handle successful donation
-  const handleDonationSuccess = (name: string, amount: number) => {
-    setDonorName(name);
-    setDonationAmount(amount);
-    setShowThankYou(true);
-    
-    // Trigger confetti effect (implemented in ThankYouModal)
+    try {
+      // Load Razorpay script
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        throw new Error("Failed to load Razorpay script");
+      }
+
+      // Create order
+      const orderResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/payments/create-order`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount }),
+        }
+      );
+
+      if (!orderResponse.ok) {
+        throw new Error("Failed to create payment order");
+      }
+
+      const order = await orderResponse.json();
+
+      // Open Razorpay checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "HypedIn - Support Education",
+        description: `Donation of ₹${amount}`,
+        order_id: order.id,
+        handler: async (response: PaymentResponse) => {
+          try {
+            // Verify payment
+            const verifyResponse = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/payments/verify-payment`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  amount,
+                }),
+              }
+            );
+
+            if (!verifyResponse.ok) {
+              throw new Error("Payment verification failed");
+            }
+
+            const result = await verifyResponse.json();
+            setSuccess(
+              `Thank you! Your donation of ₹${amount} has been received successfully.`
+            );
+            setCustomAmount("");
+            setSelectedAmount(500);
+
+            // Optionally redirect after success
+            setTimeout(() => {
+              window.location.href = "/donate?success=true";
+            }, 2000);
+          } catch (err) {
+            setError(
+              err instanceof Error ? err.message : "Payment verification failed"
+            );
+          } finally {
+            setIsLoading(false);
+          }
+        },
+        prefill: {
+          name: "",
+          email: "",
+          contact: "",
+        },
+        theme: {
+          color: "#3b82f6",
+        },
+      };
+
+      const razorpayWindow = window as any;
+      const rzp = new razorpayWindow.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      setIsLoading(false);
+    }
   };
 
   return (
-    <main className="overflow-hidden bg-white">
-      {/* Hero Section with Video Background */}
-      <HeroBanner />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="flex justify-center mb-4">
+            <Heart className="w-16 h-16 text-red-500 fill-red-500" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            Make a Difference
+          </h1>
+          <p className="text-gray-600 text-lg mb-2">
+            Your donation helps us empower students and communities
+          </p>
+          <p className="text-gray-500">
+            Support education, mentorship, and social initiatives
+          </p>
+        </div>
 
-      {/* Main Donation Form Section */}
-      <section className="donate-section py-16 md:py-24 relative z-10">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+        {/* Payment Card */}
+        <div className="bg-white rounded-lg shadow-xl p-8 mb-8">
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 font-medium">{error}</p>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {success && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 font-medium">{success}</p>
+            </div>
+          )}
+
+          {/* Amount Selection */}
+          <div className="mb-8">
+            <label className="block text-gray-700 font-semibold mb-4">
+              Select Amount or Enter Custom
+            </label>
+
+            {/* Preset Amounts */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+              {PRESET_AMOUNTS.map((amt) => (
+                <button
+                  key={amt}
+                  onClick={() => {
+                    setSelectedAmount(amt);
+                    setCustomAmount("");
+                    setError("");
+                  }}
+                  className={`py-3 px-4 rounded-lg font-semibold transition-all ${
+                    selectedAmount === amt && !customAmount
+                      ? "bg-blue-600 text-white shadow-lg scale-105"
+                      : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                  }`}
+                >
+                  ₹{amt}
+                </button>
+              ))}
+            </div>
+
+            {/* Custom Amount */}
+            <div className="mb-6">
+              <label className="block text-gray-600 text-sm mb-2">
+                Custom Amount (₹)
+              </label>
+              <input
+                type="number"
+                min="10"
+                placeholder="Enter custom amount"
+                value={customAmount}
+                onChange={(e) => {
+                  setCustomAmount(e.target.value);
+                  setSelectedAmount(null);
+                  setError("");
+                }}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+              />
+            </div>
+
+            {/* Display Selected Amount */}
+            {amount && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-gray-700">
+                  <span className="font-semibold">Donation Amount: </span>
+                  <span className="text-2xl font-bold text-blue-600">
+                    ₹{amount}
+                  </span>
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Donate Button */}
+          <button
+            onClick={handlePayment}
+            disabled={!amount || isLoading}
+            className={`w-full py-4 rounded-lg font-bold text-lg transition-all flex items-center justify-center gap-2 ${
+              !amount || isLoading
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:scale-105"
+            }`}
           >
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">Make a Difference Today</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Your generous donation brings hope and creates lasting change in the lives of those who need it most.
-            </p>
-          </motion.div>
+            {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
+            {isLoading ? "Processing..." : `Donate ₹${amount || 0}`}
+          </button>
 
-          {/* Donation Form Component */}
-          <DonationForm onDonationSuccess={handleDonationSuccess} />
+          {/* Info Text */}
+          <p className="text-center text-gray-500 text-sm mt-6">
+            Secure payment powered by Razorpay
+          </p>
         </div>
-      </section>
 
-      {/* Impact Visualization Section */}
-      <section className="donate-section py-16 md:py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <ImpactMeter />
+        {/* Impact Section */}
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-lg shadow p-6 text-center">
+            <div className="text-3xl font-bold text-blue-600 mb-2">1000+</div>
+            <p className="text-gray-600">Students Helped</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6 text-center">
+            <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
+            <p className="text-gray-600">Active Volunteers</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6 text-center">
+            <div className="text-3xl font-bold text-blue-600 mb-2">50+</div>
+            <p className="text-gray-600">Communities Served</p>
+          </div>
         </div>
-      </section>
-
-      {/* Transparency & Trust Section */}
-      <section className="donate-section py-16 md:py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <TransparencySection />
-        </div>
-      </section>
-
-      {/* Testimonial Section */}
-      <section className="donate-section py-16 md:py-20 bg-gradient-to-r from-purple-900 to-blue-700 text-white">
-        <div className="container mx-auto px-4">
-          <TestimonialSection />
-        </div>
-      </section>
-
-      {/* Floating UI Elements */}
-      <FloatingDonateButton />
-      <ChatbotButton />
-
-      {/* Thank You Modal */}
-      <AnimatePresence>
-        {showThankYou && (
-          <ThankYouModal 
-            name={donorName}
-            amount={donationAmount}
-            onClose={() => setShowThankYou(false)}
-          />
-        )}
-      </AnimatePresence>
-    </main>
+      </div>
+    </div>
   );
 }
