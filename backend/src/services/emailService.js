@@ -1,13 +1,13 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
   port: process.env.SMTP_PORT || 587,
   secure: false,
   auth: {
     user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
+    pass: process.env.SMTP_PASS,
+  },
 });
 
 const emailTemplates = {
@@ -43,21 +43,21 @@ const emailTemplates = {
       <p>This code will expire in 10 minutes.</p>
       <p>If you didn't request this, please ignore this email.</p>
     </div>
-  `
+  `,
 };
 
 const emailSubjects = {
-  registration: 'Complete Your Admin Registration',
-  login: 'Your Login Verification Code',
-  password_reset: 'Reset Your Password'
+  registration: "Complete Your Admin Registration",
+  login: "Your Login Verification Code",
+  password_reset: "Reset Your Password",
 };
 
 const sendOTPEmail = async (email, otp, type) => {
   const mailOptions = {
-    from: process.env.FROM_EMAIL || 'noreply@adminportal.com',
+    from: process.env.FROM_EMAIL || "noreply@adminportal.com",
     to: email,
     subject: emailSubjects[type],
-    html: emailTemplates[type](otp)
+    html: emailTemplates[type](otp),
   };
 
   await transporter.sendMail(mailOptions);
@@ -66,4 +66,3 @@ const sendOTPEmail = async (email, otp, type) => {
 module.exports = {
   sendOTPEmail
 };
-
