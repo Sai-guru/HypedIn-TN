@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   BarChart3,
   Users,
@@ -10,12 +10,12 @@ import {
   TrendingUp,
   Heart,
   Activity,
-  AlertCircle
-} from 'lucide-react';
-import AdminCard from '@/components/admin/ui/AdminCard';
-import DonationChart from '@/components/admin/charts/DonationChart';
-import VisitorChart from '@/components/admin/charts/VisitorChart';
-import EventChart from '@/components/admin/charts/EventChart';
+  AlertCircle,
+} from "lucide-react";
+import AdminCard from "@/components/admin/ui/AdminCard";
+import DonationChart from "@/components/admin/charts/DonationChart";
+import VisitorChart from "@/components/admin/charts/VisitorChart";
+import EventChart from "@/components/admin/charts/EventChart";
 
 export default function AdminDashboard() {
   const [mounted, setMounted] = useState(false);
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
     totalVolunteers: 89,
     totalEvents: 24,
     monthlyGrowth: 12.5,
-    activeCauses: 8
+    activeCauses: 8,
   });
 
   useEffect(() => {
@@ -36,85 +36,85 @@ export default function AdminDashboard() {
   const recentActivities = [
     {
       id: 1,
-      type: 'donation',
-      message: 'New donation of $500 received from John Doe',
-      time: '5 minutes ago',
+      type: "donation",
+      message: "New donation of $500 received from John Doe",
+      time: "5 minutes ago",
       icon: DollarSign,
-      color: 'text-green-600'
+      color: "text-green-600",
     },
     {
       id: 2,
-      type: 'volunteer',
-      message: 'New volunteer application from Sarah Johnson',
-      time: '1 hour ago',
+      type: "volunteer",
+      message: "New volunteer application from Sarah Johnson",
+      time: "1 hour ago",
       icon: Users,
-      color: 'text-blue-600'
+      color: "text-blue-600",
     },
     {
       id: 3,
-      type: 'event',
-      message: '12 new registrations for Charity Gala',
-      time: '2 hours ago',
+      type: "event",
+      message: "12 new registrations for Charity Gala",
+      time: "2 hours ago",
       icon: Calendar,
-      color: 'text-purple-600'
+      color: "text-purple-600",
     },
     {
       id: 4,
-      type: 'cause',
-      message: 'Clean Water Initiative reached 60% funding',
-      time: '3 hours ago',
+      type: "cause",
+      message: "Clean Water Initiative reached 60% funding",
+      time: "3 hours ago",
       icon: Heart,
-      color: 'text-red-600'
-    }
+      color: "text-red-600",
+    },
   ];
 
   const quickActions = [
     {
-      title: 'Create New Event',
-      description: 'Add a new fundraising event',
-      href: '/admin/events/create',
+      title: "Create New Event",
+      description: "Add a new fundraising event",
+      href: "/admin/events/create",
       icon: Calendar,
-      color: 'bg-blue-500'
+      color: "bg-blue-500",
     },
     {
-      title: 'Add New Cause',
-      description: 'Create a new cause for donations',
-      href: '/admin/causes/create',
+      title: "Add New Cause",
+      description: "Create a new cause for donations",
+      href: "/admin/causes/create",
       icon: Heart,
-      color: 'bg-red-500'
+      color: "bg-red-500",
     },
     {
-      title: 'Manage Volunteers',
-      description: 'Review volunteer applications',
-      href: '/admin/volunteers',
+      title: "Manage Volunteers",
+      description: "Review volunteer applications",
+      href: "/admin/volunteers",
       icon: Users,
-      color: 'bg-green-500'
+      color: "bg-green-500",
     },
     {
-      title: 'View Analytics',
-      description: 'Check donation analytics',
-      href: '/admin/donations/analytics',
+      title: "View Analytics",
+      description: "Check donation analytics",
+      href: "/admin/donations/analytics",
       icon: BarChart3,
-      color: 'bg-purple-500'
-    }
+      color: "bg-purple-500",
+    },
   ];
 
   if (!mounted) return null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+      <div className="mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Dashboard Overview
         </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Welcome back! Here's what's happening with your charity organization.
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -135,8 +135,8 @@ export default function AdminDashboard() {
                   ${stats.totalDonations.toLocaleString()}
                 </p>
                 <p className="text-sm text-green-600 flex items-center">
-                  <TrendingUp className="w-4 h-4 mr-1" />
-                  +{stats.monthlyGrowth}% this month
+                  <TrendingUp className="w-4 h-4 mr-1" />+{stats.monthlyGrowth}%
+                  this month
                 </p>
               </div>
             </div>
@@ -226,7 +226,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions & Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-8">
         {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -257,20 +257,22 @@ export default function AdminDashboard() {
           transition={{ delay: 0.7 }}
         >
           <AdminCard title="Quick Actions">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-5">
               {quickActions.map((action, index) => (
                 <a
                   key={index}
                   href={action.href}
-                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
+                  className="p-5 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all"
                 >
-                  <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center mb-3`}>
+                  <div
+                    className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center mb-4`}
+                  >
                     <action.icon className="w-5 h-5 text-white" />
                   </div>
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-1">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                     {action.title}
                   </h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
                     {action.description}
                   </p>
                 </a>
@@ -286,17 +288,22 @@ export default function AdminDashboard() {
           transition={{ delay: 0.8 }}
         >
           <AdminCard title="Recent Activities">
-            <div className="space-y-4">
+            <div className="space-y-5">
               {recentActivities.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-3">
-                  <div className={`flex-shrink-0 p-2 rounded-lg bg-gray-100 dark:bg-gray-800`}>
-                    <activity.icon className={`w-4 h-4 ${activity.color}`} />
+                <div
+                  key={activity.id}
+                  className="flex items-start space-x-4 pb-5 border-b border-gray-100 dark:border-gray-700 last:pb-0 last:border-0"
+                >
+                  <div
+                    className={`flex-shrink-0 p-2 rounded-lg bg-gray-100 dark:bg-gray-800`}
+                  >
+                    <activity.icon className={`w-5 h-5 ${activity.color}`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900 dark:text-white">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
                       {activity.message}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                       {activity.time}
                     </p>
                   </div>

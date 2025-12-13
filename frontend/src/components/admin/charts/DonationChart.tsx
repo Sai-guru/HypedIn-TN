@@ -1,9 +1,31 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Users, Calendar, Target } from 'lucide-react';
-import AdminCard from '@/components/admin/ui/AdminCard';
+import { useState, useEffect } from "react";
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Users,
+  Calendar,
+  Target,
+} from "lucide-react";
+import AdminCard from "@/components/admin/ui/AdminCard";
 
 interface DonationData {
   date: string;
@@ -21,58 +43,71 @@ interface CauseData {
 }
 
 const DonationChart = () => {
-  const [timeframe, setTimeframe] = useState<'week' | 'month' | 'year'>('month');
-  const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('area');
+  const [timeframe, setTimeframe] = useState<"week" | "month" | "year">(
+    "month"
+  );
+  const [chartType, setChartType] = useState<"line" | "area" | "bar">("area");
 
   // Mock data - replace with real API data
   const weeklyData: DonationData[] = [
-    { date: 'Mon', amount: 2400, donors: 12, goal: 3000 },
-    { date: 'Tue', amount: 1800, donors: 8, goal: 3000 },
-    { date: 'Wed', amount: 3200, donors: 16, goal: 3000 },
-    { date: 'Thu', amount: 2800, donors: 14, goal: 3000 },
-    { date: 'Fri', amount: 4200, donors: 21, goal: 3000 },
-    { date: 'Sat', amount: 3800, donors: 19, goal: 3000 },
-    { date: 'Sun', amount: 2900, donors: 15, goal: 3000 },
+    { date: "Mon", amount: 2400, donors: 12, goal: 3000 },
+    { date: "Tue", amount: 1800, donors: 8, goal: 3000 },
+    { date: "Wed", amount: 3200, donors: 16, goal: 3000 },
+    { date: "Thu", amount: 2800, donors: 14, goal: 3000 },
+    { date: "Fri", amount: 4200, donors: 21, goal: 3000 },
+    { date: "Sat", amount: 3800, donors: 19, goal: 3000 },
+    { date: "Sun", amount: 2900, donors: 15, goal: 3000 },
   ];
 
   const monthlyData: DonationData[] = [
-    { date: 'Jan', amount: 45000, donors: 234, goal: 50000, month: 'January' },
-    { date: 'Feb', amount: 38000, donors: 198, goal: 50000, month: 'February' },
-    { date: 'Mar', amount: 52000, donors: 267, goal: 50000, month: 'March' },
-    { date: 'Apr', amount: 48000, donors: 245, goal: 50000, month: 'April' },
-    { date: 'May', amount: 61000, donors: 312, goal: 60000, month: 'May' },
-    { date: 'Jun', amount: 58000, donors: 298, goal: 60000, month: 'June' },
-    { date: 'Jul', amount: 65000, donors: 334, goal: 60000, month: 'July' },
-    { date: 'Aug', amount: 72000, donors: 367, goal: 70000, month: 'August' },
-    { date: 'Sep', amount: 68000, donors: 345, goal: 70000, month: 'September' },
-    { date: 'Oct', amount: 74000, donors: 378, goal: 70000, month: 'October' },
-    { date: 'Nov', amount: 82000, donors: 421, goal: 80000, month: 'November' },
-    { date: 'Dec', amount: 89000, donors: 456, goal: 80000, month: 'December' },
+    { date: "Jan", amount: 45000, donors: 234, goal: 50000, month: "January" },
+    { date: "Feb", amount: 38000, donors: 198, goal: 50000, month: "February" },
+    { date: "Mar", amount: 52000, donors: 267, goal: 50000, month: "March" },
+    { date: "Apr", amount: 48000, donors: 245, goal: 50000, month: "April" },
+    { date: "May", amount: 61000, donors: 312, goal: 60000, month: "May" },
+    { date: "Jun", amount: 58000, donors: 298, goal: 60000, month: "June" },
+    { date: "Jul", amount: 65000, donors: 334, goal: 60000, month: "July" },
+    { date: "Aug", amount: 72000, donors: 367, goal: 70000, month: "August" },
+    {
+      date: "Sep",
+      amount: 68000,
+      donors: 345,
+      goal: 70000,
+      month: "September",
+    },
+    { date: "Oct", amount: 74000, donors: 378, goal: 70000, month: "October" },
+    { date: "Nov", amount: 82000, donors: 421, goal: 80000, month: "November" },
+    { date: "Dec", amount: 89000, donors: 456, goal: 80000, month: "December" },
   ];
 
   const yearlyData: DonationData[] = [
-    { date: '2020', amount: 480000, donors: 2400, goal: 500000 },
-    { date: '2021', amount: 620000, donors: 3100, goal: 600000 },
-    { date: '2022', amount: 750000, donors: 3750, goal: 700000 },
-    { date: '2023', amount: 890000, donors: 4450, goal: 850000 },
-    { date: '2024', amount: 1200000, donors: 6000, goal: 1000000 },
+    { date: "2020", amount: 480000, donors: 2400, goal: 500000 },
+    { date: "2021", amount: 620000, donors: 3100, goal: 600000 },
+    { date: "2022", amount: 750000, donors: 3750, goal: 700000 },
+    { date: "2023", amount: 890000, donors: 4450, goal: 850000 },
+    { date: "2024", amount: 1200000, donors: 6000, goal: 1000000 },
   ];
 
   const causeData: CauseData[] = [
-    { name: 'Education', amount: 125000, percentage: 35, color: '#3B82F6' },
-    { name: 'Healthcare', amount: 89000, percentage: 25, color: '#10B981' },
-    { name: 'Clean Water', amount: 71000, percentage: 20, color: '#F59E0B' },
-    { name: 'Emergency Relief', amount: 54000, percentage: 15, color: '#EF4444' },
-    { name: 'Environment', amount: 18000, percentage: 5, color: '#8B5CF6' },
+    { name: "Education", amount: 125000, percentage: 35, color: "#3B82F6" },
+    { name: "Healthcare", amount: 89000, percentage: 25, color: "#10B981" },
+    { name: "Clean Water", amount: 71000, percentage: 20, color: "#F59E0B" },
+    {
+      name: "Emergency Relief",
+      amount: 54000,
+      percentage: 15,
+      color: "#EF4444",
+    },
+    { name: "Environment", amount: 18000, percentage: 5, color: "#8B5CF6" },
   ];
 
   const getCurrentData = () => {
     switch (timeframe) {
-      case 'week':
+      case "week":
         return weeklyData;
-      case 'month':
+      case "month":
         return monthlyData;
-      case 'year':
+      case "year":
         return yearlyData;
       default:
         return monthlyData;
@@ -85,13 +120,18 @@ const DonationChart = () => {
   const avgDonation = totalAmount / totalDonors;
   const lastPeriodAmount = data[data.length - 2]?.amount || 0;
   const currentPeriodAmount = data[data.length - 1]?.amount || 0;
-  const growthRate = lastPeriodAmount > 0 ? ((currentPeriodAmount - lastPeriodAmount) / lastPeriodAmount) * 100 : 0;
+  const growthRate =
+    lastPeriodAmount > 0
+      ? ((currentPeriodAmount - lastPeriodAmount) / lastPeriodAmount) * 100
+      : 0;
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-          <p className="font-semibold text-gray-900 dark:text-white">{`${timeframe === 'month' ? payload[0]?.payload?.month || label : label}`}</p>
+          <p className="font-semibold text-gray-900 dark:text-white">{`${
+            timeframe === "month" ? payload[0]?.payload?.month || label : label
+          }`}</p>
           <p className="text-blue-600 dark:text-blue-400">
             Amount: ${payload[0]?.value?.toLocaleString()}
           </p>
@@ -114,70 +154,70 @@ const DonationChart = () => {
   const renderChart = () => {
     const commonProps = {
       data,
-      margin: { top: 5, right: 30, left: 20, bottom: 5 }
+      margin: { top: 5, right: 30, left: 20, bottom: 5 },
     };
 
     switch (chartType) {
-      case 'line':
+      case "line":
         return (
           <LineChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
             <XAxis dataKey="date" className="text-sm" />
             <YAxis className="text-sm" />
             <Tooltip content={<CustomTooltip />} />
-            <Line 
-              type="monotone" 
-              dataKey="amount" 
-              stroke="#3B82F6" 
+            <Line
+              type="monotone"
+              dataKey="amount"
+              stroke="#3B82F6"
               strokeWidth={3}
-              dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6, stroke: '#3B82F6', strokeWidth: 2 }}
+              dot={{ fill: "#3B82F6", strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, stroke: "#3B82F6", strokeWidth: 2 }}
             />
-            <Line 
-              type="monotone" 
-              dataKey="goal" 
-              stroke="#F59E0B" 
+            <Line
+              type="monotone"
+              dataKey="goal"
+              stroke="#F59E0B"
               strokeWidth={2}
               strokeDasharray="5 5"
               dot={false}
             />
           </LineChart>
         );
-      case 'area':
+      case "area":
         return (
           <AreaChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
             <XAxis dataKey="date" className="text-sm" />
             <YAxis className="text-sm" />
             <Tooltip content={<CustomTooltip />} />
-            <Area 
-              type="monotone" 
-              dataKey="amount" 
-              stroke="#3B82F6" 
+            <Area
+              type="monotone"
+              dataKey="amount"
+              stroke="#3B82F6"
               fill="url(#colorAmount)"
               strokeWidth={2}
             />
-            <Area 
-              type="monotone" 
-              dataKey="goal" 
-              stroke="#F59E0B" 
+            <Area
+              type="monotone"
+              dataKey="goal"
+              stroke="#F59E0B"
               fill="url(#colorGoal)"
               strokeWidth={2}
               fillOpacity={0.3}
             />
             <defs>
               <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1}/>
+                <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
               </linearGradient>
               <linearGradient id="colorGoal" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6}/>
-                <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1}/>
+                <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
+                <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
               </linearGradient>
             </defs>
           </AreaChart>
         );
-      case 'bar':
+      case "bar":
         return (
           <BarChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
@@ -185,7 +225,12 @@ const DonationChart = () => {
             <YAxis className="text-sm" />
             <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="amount" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="goal" fill="#F59E0B" radius={[4, 4, 0, 0]} fillOpacity={0.6} />
+            <Bar
+              dataKey="goal"
+              fill="#F59E0B"
+              radius={[4, 4, 0, 0]}
+              fillOpacity={0.6}
+            />
           </BarChart>
         );
       default:
@@ -194,13 +239,15 @@ const DonationChart = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <AdminCard>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Raised</p>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Total Raised
+              </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 ${totalAmount.toLocaleString()}
               </p>
@@ -210,7 +257,11 @@ const DonationChart = () => {
                 ) : (
                   <TrendingDown className="w-4 h-4 text-red-500 mr-1" />
                 )}
-                <span className={`text-sm font-medium ${growthRate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <span
+                  className={`text-sm font-medium ${
+                    growthRate >= 0 ? "text-green-600" : "text-red-600"
+                  }`}
+                >
                   {Math.abs(growthRate).toFixed(1)}%
                 </span>
               </div>
@@ -224,7 +275,9 @@ const DonationChart = () => {
         <AdminCard>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Donors</p>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Total Donors
+              </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {totalDonors.toLocaleString()}
               </p>
@@ -241,7 +294,9 @@ const DonationChart = () => {
         <AdminCard>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Donation</p>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Avg Donation
+              </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 ${avgDonation.toFixed(0)}
               </p>
@@ -258,7 +313,9 @@ const DonationChart = () => {
         <AdminCard>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">This Period</p>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                This Period
+              </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 ${currentPeriodAmount.toLocaleString()}
               </p>
@@ -277,21 +334,25 @@ const DonationChart = () => {
       <AdminCard>
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Donation Analytics</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Track donation trends and goal progress</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Donation Analytics
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Track donation trends and goal progress
+            </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 mt-4 lg:mt-0">
             {/* Timeframe Selector */}
             <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-              {(['week', 'month', 'year'] as const).map((period) => (
+              {(["week", "month", "year"] as const).map((period) => (
                 <button
                   key={period}
                   onClick={() => setTimeframe(period)}
                   className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
                     timeframe === period
-                      ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                      ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                      : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                   }`}
                 >
                   {period.charAt(0).toUpperCase() + period.slice(1)}
@@ -301,14 +362,14 @@ const DonationChart = () => {
 
             {/* Chart Type Selector */}
             <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-              {(['area', 'line', 'bar'] as const).map((type) => (
+              {(["area", "line", "bar"] as const).map((type) => (
                 <button
                   key={type}
                   onClick={() => setChartType(type)}
                   className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
                     chartType === type
-                      ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                      ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                      : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                   }`}
                 >
                   {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -326,9 +387,11 @@ const DonationChart = () => {
       </AdminCard>
 
       {/* Donation by Cause */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-8">
         <AdminCard>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Donations by Cause</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Donations by Cause
+          </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -346,8 +409,11 @@ const DonationChart = () => {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  formatter={(value: number) => [`$${value.toLocaleString()}`, 'Amount']}
+                <Tooltip
+                  formatter={(value: number) => [
+                    `$${value.toLocaleString()}`,
+                    "Amount",
+                  ]}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -355,12 +421,14 @@ const DonationChart = () => {
         </AdminCard>
 
         <AdminCard>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Cause Breakdown</h3>
-          <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+            Cause Breakdown
+          </h3>
+          <div className="space-y-5">
             {causeData.map((cause, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div 
+                  <div
                     className="w-4 h-4 rounded-full"
                     style={{ backgroundColor: cause.color }}
                   ></div>
