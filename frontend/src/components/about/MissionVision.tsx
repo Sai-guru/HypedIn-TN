@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { safeFetch } from '@/lib/fetchUtils';
-import { Star, Heart, Globe, Lightbulb, Target, Eye } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { safeFetch } from "@/lib/fetchUtils";
+import { Star, Heart, Globe, Lightbulb, Target, Eye } from "lucide-react";
 
 interface CoreValue {
   id: number;
@@ -24,7 +24,8 @@ interface MissionVisionData {
 }
 
 interface MissionVisionProps {
-  valuesRef?: React.RefObject<HTMLDivElement>;
+  valuesRef?: React.RefObject<HTMLDivElement | null>;
+  coreValues?: CoreValue[];
 }
 
 export default function MissionVision({ valuesRef }: MissionVisionProps) {
@@ -35,13 +36,15 @@ export default function MissionVision({ valuesRef }: MissionVisionProps) {
   useEffect(() => {
     const fetchMissionVision = async () => {
       try {
-        const result = await safeFetch('/api/mission');
+        const result = await safeFetch("/api/mission");
         if (!result.success) {
-          throw new Error(result.error || 'Failed to fetch mission and vision data');
+          throw new Error(
+            result.error || "Failed to fetch mission and vision data"
+          );
         }
         setData(result.data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
       }
@@ -53,13 +56,13 @@ export default function MissionVision({ valuesRef }: MissionVisionProps) {
   const getIcon = (iconName: string) => {
     const iconClasses = "w-16 h-16 drop-shadow-lg";
     switch (iconName) {
-      case 'Heart':
+      case "Heart":
         return <Heart className={`${iconClasses} text-pink-500`} />;
-      case 'Globe':
+      case "Globe":
         return <Globe className={`${iconClasses} text-blue-500`} />;
-      case 'Lightbulb':
+      case "Lightbulb":
         return <Lightbulb className={`${iconClasses} text-yellow-500`} />;
-      case 'Target':
+      case "Target":
         return <Target className={`${iconClasses} text-green-500`} />;
       default:
         return <Star className={`${iconClasses} text-purple-500`} />;
@@ -105,8 +108,18 @@ export default function MissionVision({ valuesRef }: MissionVisionProps) {
         <div className="text-center mb-16">
           <div className="inline-block p-2 bg-indigo-100 rounded-full mb-6">
             <div className="w-16 h-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              <svg
+                className="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
               </svg>
             </div>
           </div>
@@ -115,7 +128,7 @@ export default function MissionVision({ valuesRef }: MissionVisionProps) {
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto rounded-full"></div>
         </div>
-        
+
         <div className="flex flex-col lg:flex-row gap-8 mb-20">
           {/* Mission Section */}
           {data.mission.isVisible && (
@@ -129,19 +142,20 @@ export default function MissionVision({ valuesRef }: MissionVisionProps) {
                     </div>
                     <div>
                       <h3 className="text-3xl font-black text-gray-800">
-                        {data.mission.title || 'Mission'}
+                        {data.mission.title || "Mission"}
                       </h3>
                       <div className="w-12 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2"></div>
                     </div>
                   </div>
                   <p className="text-lg text-gray-700 leading-relaxed">
-                    {data.mission.content || 'To create a world where every individual has access to basic human rights—food, education, healthcare, and dignity.'}
+                    {data.mission.content ||
+                      "To create a world where every individual has access to basic human rights—food, education, healthcare, and dignity."}
                   </p>
                 </div>
               </div>
             </div>
           )}
-          
+
           {/* Vision Section */}
           {data.vision.isVisible && (
             <div className="lg:w-1/2 group">
@@ -154,20 +168,21 @@ export default function MissionVision({ valuesRef }: MissionVisionProps) {
                     </div>
                     <div>
                       <h3 className="text-3xl font-black text-gray-800">
-                        {data.vision.title || 'Vision'}
+                        {data.vision.title || "Vision"}
                       </h3>
                       <div className="w-12 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mt-2"></div>
                     </div>
                   </div>
                   <p className="text-lg text-gray-700 leading-relaxed">
-                    {data.vision.content || 'To end poverty, uplift communities, and create sustainable solutions for a better tomorrow.'}
+                    {data.vision.content ||
+                      "To end poverty, uplift communities, and create sustainable solutions for a better tomorrow."}
                   </p>
                 </div>
               </div>
             </div>
           )}
         </div>
-        
+
         {/* Core Values Section */}
         {data.coreValues && data.coreValues.length > 0 && (
           <div ref={valuesRef} className="mt-20">
@@ -176,15 +191,16 @@ export default function MissionVision({ valuesRef }: MissionVisionProps) {
                 Core Values
               </h3>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                The principles that guide every decision we make and every action we take.
+                The principles that guide every decision we make and every
+                action we take.
               </p>
               <div className="w-24 h-1 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto rounded-full mt-6"></div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {data.coreValues.map((value, index) => (
-                <div 
-                  key={value.id} 
+                <div
+                  key={value.id}
                   className="group relative"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
