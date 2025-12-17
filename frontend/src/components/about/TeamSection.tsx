@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { safeFetch, FetchErrorFallback } from '@/lib/fetchUtils';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { safeFetch, FetchErrorFallback } from "@/lib/fetchUtils";
 
 interface TeamMember {
   id: string;
@@ -42,17 +42,17 @@ export default function TeamSection() {
   const fetchTeamData = async () => {
     try {
       setLoading(true);
-      const result = await safeFetch('/api/team');
-      
+      const result = await safeFetch("/api/team");
+
       if (result.success && result.data) {
         setTeamData(result.data);
         setError(null);
       } else {
-        setError(result.error || 'Failed to load team data');
+        setError(result.error || "Failed to load team data");
       }
     } catch (err) {
-      console.error('Error fetching team data:', err);
-      setError('Failed to load team data. Please try again later.');
+      console.error("Error fetching team data:", err);
+      setError("Failed to load team data. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -80,7 +80,7 @@ export default function TeamSection() {
           <div className="text-center">
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
               <p>{error}</p>
-              <button 
+              <button
                 onClick={fetchTeamData}
                 className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
               >
@@ -113,25 +113,31 @@ export default function TeamSection() {
 
   // Filter visible members and sort by order
   const visibleMembers = teamData.members
-    .filter(member => member.isVisible !== false)
+    .filter((member) => member.isVisible !== false)
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
   // Use settings from database or fallback to defaults
+  let ctaLink = teamData.sectionSettings?.ctaLink || "/volunteer";
+
+  // Fix incorrect URLs
+  if (ctaLink === "/careers") {
+    ctaLink = "/volunteer";
+  }
+
   const {
     title = "Meet Our Team",
     subtitle = "The Heart Behind the Mission",
     volunteerText = "Volunteers & Change-Makers",
     volunteerCount = "+1000",
     ctaText = "Join Our Team",
-    ctaLink = "/get-involved",
     showCtaSection = true,
-    backgroundColor = "bg-gray-50"
+    backgroundColor = "bg-gray-50",
   } = teamData.sectionSettings;
 
   return (
     <section className={`py-16 md:py-24 ${backgroundColor}`}>
       <div className="container mx-auto px-4">
-        <motion.div 
+        <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -145,11 +151,11 @@ export default function TeamSection() {
             "{subtitle}"
           </p>
         </motion.div>
-                
+
         {visibleMembers.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {visibleMembers.map((member, index) => (
-              <motion.div 
+              <motion.div
                 key={member.id}
                 className="relative"
                 initial={{ opacity: 0, y: 20 }}
@@ -161,7 +167,7 @@ export default function TeamSection() {
               >
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                   <div className="relative h-64 overflow-hidden">
-                    <img 
+                    <img
                       src={member.image || `/api/placeholder/400/400`}
                       alt={member.name}
                       className="w-full h-full object-cover"
@@ -170,14 +176,24 @@ export default function TeamSection() {
                         e.currentTarget.src = `/api/placeholder/400/400`;
                       }}
                     />
-                    <div className={`absolute inset-0 bg-gradient-to-t from-purple-900 to-transparent transition-opacity duration-300 ${activeTeamMember === member.id ? 'opacity-70' : 'opacity-0'}`} />
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-t from-purple-900 to-transparent transition-opacity duration-300 ${
+                        activeTeamMember === member.id
+                          ? "opacity-70"
+                          : "opacity-0"
+                      }`}
+                    />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800">{member.name}</h3>
+                    <h3 className="text-xl font-bold text-gray-800">
+                      {member.name}
+                    </h3>
                     <p className="text-purple-600 font-medium">{member.role}</p>
-                    
+
                     <div
-                      className={`mt-4 overflow-hidden transition-all duration-300 ${activeTeamMember === member.id ? 'max-h-48' : 'max-h-0'}`}
+                      className={`mt-4 overflow-hidden transition-all duration-300 ${
+                        activeTeamMember === member.id ? "max-h-48" : "max-h-0"
+                      }`}
                     >
                       <p className="text-gray-600 text-sm">{member.bio}</p>
                     </div>
@@ -187,9 +203,9 @@ export default function TeamSection() {
             ))}
           </div>
         )}
-                
+
         {showCtaSection && (
-          <motion.div 
+          <motion.div
             className="text-center mt-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -197,10 +213,13 @@ export default function TeamSection() {
             transition={{ duration: 0.6 }}
           >
             <p className="text-xl text-gray-700 mb-8">
-              <span className="font-bold">{volunteerCount} {volunteerText}</span> across India
+              <span className="font-bold">
+                {volunteerCount} {volunteerText}
+              </span>{" "}
+              across India
             </p>
             <div className="inline-block">
-              <a 
+              <a
                 href={ctaLink}
                 className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-bold rounded-full hover:from-purple-700 hover:to-blue-600 transition-all duration-300 hover:scale-105 shadow-lg"
               >

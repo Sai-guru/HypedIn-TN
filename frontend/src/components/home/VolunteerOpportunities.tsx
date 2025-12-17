@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -307,7 +307,7 @@ const VolunteerOpportunities = () => {
                 Become a Volunteer
               </Link>
               <Link
-                href="/volunteer-faq"
+                href="/volunteer"
                 className="inline-block bg-white/20 backdrop-blur-md border border-white/30 text-white font-semibold px-8 py-4 rounded-full hover:bg-white/30 transition-all duration-300 text-center shadow-lg"
               >
                 Learn More

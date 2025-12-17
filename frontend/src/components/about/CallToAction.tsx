@@ -1,6 +1,7 @@
- import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { safeFetch } from '@/lib/fetchUtils';
+// deno-lint-ignore-file
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { safeFetch } from "@/lib/fetchUtils";
 
 export default function CallToAction() {
   const [ctaData, setCTAData] = useState<any>(null);
@@ -13,12 +14,12 @@ export default function CallToAction() {
 
   const fetchCTAData = async () => {
     try {
-      const result = await safeFetch('/api/aboutcta');
+      const result = await safeFetch("/api/aboutcta");
 
       if (result.success && result.data) {
         setCTAData(result.data);
       } else {
-        setError(result.error || 'Failed to fetch CTA data');
+        setError(result.error || "Failed to fetch CTA data");
 
         // fallback default data
         setCTAData({
@@ -41,8 +42,8 @@ export default function CallToAction() {
             },
             {
               id: "volunteer",
-              text: "Volunteer",
-              href: "/get-involved",
+              text: "Get Started",
+              href: "/volunteer",
               style: "secondary",
               visible: true,
               order: 2,
@@ -109,10 +110,22 @@ export default function CallToAction() {
   };
 
   // Sort visible buttons
+  const normalizeUrl = (url: string) => {
+    // Fix incorrect URLs
+    if (url === "/start") return "/volunteer";
+    if (url === "/get-involved") return "/volunteer";
+    if (url === "/careers") return "/volunteer";
+    return url;
+  };
+
   const sortedButtons =
     ctaData.buttons
       ?.filter((button: any) => button.visible)
-      ?.sort((a: any, b: any) => a.order - b.order) || [];
+      ?.sort((a: any, b: any) => a.order - b.order)
+      ?.map((button: any) => ({
+        ...button,
+        href: normalizeUrl(button.href),
+      })) || [];
 
   // Button style generator
   const getButtonClass = (style: string) => {
@@ -125,7 +138,9 @@ export default function CallToAction() {
 
   return (
     <section
-      className={`${getPaddingClass()} ${getBackgroundClass()} text-${ctaData.textColor}`}
+      className={`${getPaddingClass()} ${getBackgroundClass()} text-${
+        ctaData.textColor
+      }`}
       style={
         ctaData.backgroundType === "image"
           ? { backgroundImage: `url(${ctaData.backgroundImage})` }
