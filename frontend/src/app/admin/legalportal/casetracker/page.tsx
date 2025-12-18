@@ -315,9 +315,12 @@ export default function CaseTrackerAdmin() {
     },
   ]);
 
-  const API_HOST = process.env.NEXT_PUBLIC_API_BASE_URL
-    ? process.env.NEXT_PUBLIC_API_BASE_URL.replace(/\/++$/, "")
-    : "http://localhost:5000";
+const API_HOST = process.env.NEXT_PUBLIC_API_BASE_URL
+  ? process.env.NEXT_PUBLIC_API_BASE_URL.endsWith("/")
+    ? process.env.NEXT_PUBLIC_API_BASE_URL.slice(0, -1)
+    : process.env.NEXT_PUBLIC_API_BASE_URL
+  : "http://localhost:5000";
+
   const API = `${API_HOST}/api/lcase`;
 
   // Notification system
