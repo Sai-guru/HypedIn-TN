@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>Bharat Samarth Trust - Changing Lives Together</title>
+        <title>Bharat Samartha Trust - Changing Lives Together</title>
         <meta
           name="description"
           content="Join our mission to create a better world through compassion and action"

@@ -124,7 +124,7 @@ export default function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                  Bharat Samarth Trust
+                  Bharat Samartha Trust
                 </motion.span>
                 <motion.div 
                   className={`text-sm font-medium ${isScrolled ? 'text-violet-400' : 'text-violet-200'} transition-colors`}
