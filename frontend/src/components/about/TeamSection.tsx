@@ -116,6 +116,18 @@ export default function TeamSection() {
     .filter((member) => member.isVisible !== false)
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
+  const resolveMemberImage = (member: TeamMember) => {
+    const isFounder =
+      member.name?.toLowerCase().includes("veeramani") ||
+      member.role?.toLowerCase().includes("founder");
+
+    if (isFounder) {
+      return "https://2mtegaywr8.ucarecd.net/bb964652-5d55-47d7-ad89-55517830a14c/veeraMani.jpeg";
+    }
+
+    return member.image || "/api/placeholder/400/400";
+  };
+
   // Use settings from database or fallback to defaults
   let ctaLink = teamData.sectionSettings?.ctaLink || "/volunteer";
 
@@ -168,7 +180,7 @@ export default function TeamSection() {
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                   <div className="relative h-64 overflow-hidden">
                     <img
-                      src={member.image || `/api/placeholder/400/400`}
+                      src={resolveMemberImage(member)}
                       alt={member.name}
                       className="w-full h-full object-cover"
                       onError={(e) => {
