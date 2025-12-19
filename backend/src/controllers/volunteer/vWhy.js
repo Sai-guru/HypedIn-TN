@@ -1,21 +1,12 @@
-const WhyVolunteer = require('../../models/volunteer/vWhy');
+const WhyVolunteer = require("../../models/volunteer/vWhy");
 
 // GET all settings
 exports.getWhyVolunteer = async (req, res) => {
   try {
     let config = await WhyVolunteer.findOne();
     if (!config) {
-      config = new WhyVolunteer({
-        benefitCards: [],
-        sectionSettings: {
-          title: '',
-          subtitle: '',
-          isVisible: true,
-          backgroundColor: 'bg-white',
-          textAlignment: 'center',
-          animationEnabled: true
-        }
-      });
+      // Rely on schema defaults to avoid validation errors when fields are missing.
+      config = new WhyVolunteer({ benefitCards: [] });
       await config.save();
     }
     res.status(200).json(config);
@@ -25,18 +16,17 @@ exports.getWhyVolunteer = async (req, res) => {
   }
 };
 
-
 exports.updateWhyVolunteer = async (req, res) => {
   try {
     const { benefitCards, sectionSettings } = req.body;
 
     // Validate the incoming payload
-    if (!Array.isArray(benefitCards) || typeof sectionSettings !== 'object') {
-      return res.status(400).json({ error: 'Invalid request body structure' });
+    if (!Array.isArray(benefitCards) || typeof sectionSettings !== "object") {
+      return res.status(400).json({ error: "Invalid request body structure" });
     }
 
     // Sanitize benefitCards - remove any _id fields that might be present
-    const sanitizedBenefitCards = benefitCards.map(card => {
+    const sanitizedBenefitCards = benefitCards.map((card) => {
       // Create a copy without _id since we disabled _id in schema
       const { _id, ...cardWithoutId } = card;
       return cardWithoutId;
@@ -49,15 +39,15 @@ exports.updateWhyVolunteer = async (req, res) => {
 
     if (!config) {
       // Create new document
-      config = new WhyVolunteer({ 
-        benefitCards: sanitizedBenefitCards, 
-        sectionSettings: sanitizedSectionSettings 
+      config = new WhyVolunteer({
+        benefitCards: sanitizedBenefitCards,
+        sectionSettings: sanitizedSectionSettings,
       });
     } else {
       // Clear existing arrays to avoid merge issues
       config.benefitCards = [];
       config.sectionSettings = sanitizedSectionSettings;
-      
+
       // Add new benefit cards
       config.benefitCards.push(...sanitizedBenefitCards);
     }
@@ -65,14 +55,14 @@ exports.updateWhyVolunteer = async (req, res) => {
     await config.save();
 
     res.status(200).json({
-      message: 'Updated successfully',
-      data: config
+      message: "Updated successfully",
+      data: config,
     });
   } catch (err) {
-    console.error('Error in updateWhyVolunteer:', err);
-    res.status(500).json({ 
-      error: 'Internal Server Error', 
-      details: err.message 
+    console.error("Error in updateWhyVolunteer:", err);
+    res.status(500).json({
+      error: "Internal Server Error",
+      details: err.message,
     });
   }
 };
